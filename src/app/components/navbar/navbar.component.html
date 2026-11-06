@@ -1,0 +1,103 @@
+<!--
+  navbar.component.html — Top Navigation Bar Template
+
+  Layout:
+  ┌────────────────────────────────────────────────────────────┐
+  │ [☰] [Page Icon] [Page Title]   [🌙] [🔔] [AS ▾]          │
+  └────────────────────────────────────────────────────────────┘
+     ↑                                        ↑
+  Hamburger (mobile only)             User profile dropdown
+-->
+
+<header class="navbar">
+
+  <!-- ══ LEFT: Hamburger + Page Title ════════════════════════════ -->
+  <div class="navbar-left">
+
+    <!-- Hamburger menu button (only visible on mobile) -->
+    <button
+      class="btn-hamburger"
+      (click)="onToggleSidebar()"
+      aria-label="Toggle navigation menu"
+    >
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+
+    <!-- Page title (icon + text) — auto-updates on navigation -->
+    <div class="page-title-wrap">
+      <span class="page-icon">{{ pageInfo().icon }}</span>
+      <h1 class="page-title">{{ pageInfo().title }}</h1>
+    </div>
+
+  </div>
+
+  <!-- ══ RIGHT: Theme + Notifications + User ═════════════════════ -->
+  <div class="navbar-right">
+
+    <!-- 1. Theme Toggle Button -->
+    <button
+      class="btn-icon"
+      (click)="toggleTheme()"
+      [title]="themeLabel()"
+      aria-label="Toggle dark/light mode"
+    >
+      {{ themeIcon() }}
+    </button>
+
+    <!-- 2. Notification Bell (UI element — decorative for now) -->
+    <button class="btn-icon" title="Notifications" aria-label="Notifications">
+      <span class="bell-wrap">
+        🔔
+        <span class="notification-dot"></span>
+      </span>
+    </button>
+
+    <!-- 3. User Profile Dropdown ─────────────────────────── -->
+    <div class="profile-wrap">
+
+      <!-- Profile trigger button (shows initials avatar) -->
+      <button class="btn-profile" (click)="toggleProfileMenu()" aria-label="Open profile menu">
+        <div class="avatar">{{ userInitials() }}</div>
+        <div class="user-label">
+          <span class="user-name-short">{{ currentUser()?.fullName?.split(' ')[0] ?? 'User' }}</span>
+        </div>
+        <span class="dropdown-caret" [class.rotated]="showProfileMenu()">▾</span>
+      </button>
+
+      <!-- Dropdown menu -->
+      @if (showProfileMenu()) {
+        <div class="dropdown-menu">
+
+          <!-- User info header -->
+          <div class="dropdown-header">
+            <div class="dropdown-avatar">{{ userInitials() }}</div>
+            <div class="dropdown-user-info">
+              <span class="dropdown-name">{{ currentUser()?.fullName ?? 'User' }}</span>
+              <span class="dropdown-email">{{ currentUser()?.email ?? '' }}</span>
+            </div>
+          </div>
+
+          <div class="dropdown-divider"></div>
+
+          <!-- Menu items -->
+          <a routerLink="/profile" class="dropdown-item" (click)="showProfileMenu.set(false)">
+            <span>👤</span> My Profile
+          </a>
+          <a routerLink="/settings" class="dropdown-item" (click)="showProfileMenu.set(false)">
+            <span>⚙️</span> Settings
+          </a>
+
+          <div class="dropdown-divider"></div>
+
+          <button class="dropdown-item dropdown-logout" (click)="logout()">
+            <span>🚪</span> Logout
+          </button>
+
+        </div>
+      }
+    </div>
+
+  </div>
+</header>

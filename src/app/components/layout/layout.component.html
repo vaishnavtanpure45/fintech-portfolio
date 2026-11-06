@@ -1,0 +1,50 @@
+<!--
+  layout.component.html — Layout Template
+
+  Structure:
+  ┌──────────────────────────────────────────────────────┐
+  │  .app-layout                                          │
+  │  ┌─────────┐  ┌────────────────────────────────────┐ │
+  │  │         │  │ app-navbar (sticky top bar)         │ │
+  │  │app-     │  ├────────────────────────────────────┤ │
+  │  │sidebar  │  │                                    │ │
+  │  │         │  │   <router-outlet>                  │ │
+  │  │(fixed)  │  │   (Dashboard / Transactions / etc) │ │
+  │  │         │  │                                    │ │
+  │  └─────────┘  └────────────────────────────────────┘ │
+  │  .overlay (mobile only — dark backdrop)               │
+  └──────────────────────────────────────────────────────┘
+-->
+
+<div class="app-layout">
+
+  <!-- ══ SIDEBAR ══════════════════════════════════════════════════ -->
+  <!-- [isOpen] passes the current open/close state to the sidebar  -->
+  <!-- (closeRequested) listens for the sidebar's close request     -->
+  <app-sidebar
+    [isOpen]="sidebarOpen()"
+    (closeRequested)="closeSidebar()"
+  ></app-sidebar>
+
+  <!-- ══ MAIN AREA (Navbar + Page Content) ═══════════════════════ -->
+  <div class="main-wrapper">
+
+    <!-- Sticky top navigation bar -->
+    <app-navbar
+      (sidebarToggled)="toggleSidebar()"
+    ></app-navbar>
+
+    <!-- Page content — router-outlet renders the active child route here -->
+    <main class="page-content">
+      <router-outlet></router-outlet>
+    </main>
+
+  </div>
+
+  <!-- ══ MOBILE OVERLAY ═══════════════════════════════════════════ -->
+  <!-- Dark backdrop behind sidebar on mobile. Click to close sidebar. -->
+  @if (sidebarOpen()) {
+    <div class="overlay" (click)="closeSidebar()"></div>
+  }
+
+</div>

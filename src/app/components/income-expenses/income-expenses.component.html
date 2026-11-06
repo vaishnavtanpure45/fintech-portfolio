@@ -1,0 +1,38 @@
+<div class="page">
+  <h2 class="page-title">💰 Income & Expenses</h2>
+  <p class="page-subtitle">Financial summary and breakdown</p>
+
+  <div class="summary-strip">
+    <div class="scard sc-green"><span class="sc-icon">📈</span><div><span class="sc-label">Total Income</span><span class="sc-val">{{ fmt(totalIncome()) }}</span></div></div>
+    <div class="scard sc-red"><span class="sc-icon">📉</span><div><span class="sc-label">Total Expenses</span><span class="sc-val">{{ fmt(totalExpenses()) }}</span></div></div>
+    <div class="scard" [class.sc-green]="netBalance()>=0" [class.sc-red]="netBalance()<0"><span class="sc-icon">💰</span><div><span class="sc-label">Net Balance</span><span class="sc-val">{{ fmt(netBalance()) }}</span></div></div>
+  </div>
+
+  <!-- Main Chart -->
+  <div class="chart-card full"><h3 class="card-title">📊 Monthly Income vs Expenses</h3><div class="chart-wrap"><canvas #ieChart></canvas></div></div>
+
+  <div class="charts-row">
+    <div class="chart-card"><h3 class="card-title">📉 Monthly Expenses</h3><div class="chart-wrap"><canvas #expChart></canvas></div></div>
+    <div class="chart-card"><h3 class="card-title">🍩 Expense by Category</h3><div class="chart-wrap"><canvas #catChart></canvas></div></div>
+  </div>
+
+  <!-- Transaction Lists -->
+  <div class="list-section">
+    <div class="tab-bar">
+      <button class="tab-btn" [class.active]="activeTab()==='income'" (click)="activeTab.set('income')">📈 Income ({{ incomeList().length }})</button>
+      <button class="tab-btn" [class.active]="activeTab()==='expense'" (click)="activeTab.set('expense')">📉 Expenses ({{ expenseList().length }})</button>
+    </div>
+    <div class="list-card">
+      @if (activeTab() === 'income') {
+        @for (t of incomeList(); track t.id) {
+          <div class="list-row"><div class="lr-icon lr-green">↗</div><div class="lr-info"><span class="lr-title">{{ t.title }}</span><span class="lr-meta">{{ t.category }} · {{ t.date | date:'mediumDate' }}</span></div><span class="lr-amount text-green">+{{ fmt(t.amount) }}</span></div>
+        } @empty { <p class="empty">No income records.</p> }
+      }
+      @if (activeTab() === 'expense') {
+        @for (t of expenseList(); track t.id) {
+          <div class="list-row"><div class="lr-icon lr-red">↘</div><div class="lr-info"><span class="lr-title">{{ t.title }}</span><span class="lr-meta">{{ t.category }} · {{ t.date | date:'mediumDate' }}</span></div><span class="lr-amount text-red">-{{ fmt(t.amount) }}</span></div>
+        } @empty { <p class="empty">No expense records.</p> }
+      }
+    </div>
+  </div>
+</div>

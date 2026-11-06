@@ -1,0 +1,92 @@
+<div class="dashboard">
+  <!-- Summary Cards -->
+  <div class="cards-grid">
+    <div class="summary-card">
+      <div class="card-icon icon-balance">💰</div>
+      <div class="card-body">
+        <span class="card-label">Total Balance</span>
+        <span class="card-value">{{ fmt(netBalance()) }}</span>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="card-icon icon-income">📈</div>
+      <div class="card-body">
+        <span class="card-label">Total Income</span>
+        <span class="card-value text-green">{{ fmt(totalIncome()) }}</span>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="card-icon icon-expense">📉</div>
+      <div class="card-body">
+        <span class="card-label">Total Expenses</span>
+        <span class="card-value text-red">{{ fmt(totalExpenses()) }}</span>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="card-icon icon-invest">🏦</div>
+      <div class="card-body">
+        <span class="card-label">Investments</span>
+        <span class="card-value text-amber">{{ fmt(totalCurrentValue()) }}</span>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="card-icon" [class.icon-profit]="totalPL() >= 0" [class.icon-loss]="totalPL() < 0">
+        {{ totalPL() >= 0 ? '✅' : '❌' }}
+      </div>
+      <div class="card-body">
+        <span class="card-label">Investment P/L</span>
+        <span class="card-value" [class.text-green]="totalPL()>=0" [class.text-red]="totalPL()<0">
+          {{ fmt(totalPL()) }}
+          <small class="pct-badge" [class.badge-green]="returnPct()>=0" [class.badge-red]="returnPct()<0">{{ returnPct() >= 0 ? '+' : '' }}{{ returnPct() }}%</small>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <button class="btn-action btn-primary" (click)="navigateTo('/transactions')">💳 Add Transaction</button>
+    <button class="btn-action btn-secondary" (click)="navigateTo('/investments')">📈 Add Investment</button>
+    <button class="btn-action btn-tertiary" (click)="navigateTo('/analytics')">📊 View Analytics</button>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h3 class="chart-title">📊 Income vs Expenses</h3>
+      <div class="chart-wrap"><canvas #incomeExpenseChart></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3 class="chart-title">🍩 Expense Categories</h3>
+      <div class="chart-wrap chart-wrap-donut"><canvas #categoryChart></canvas></div>
+    </div>
+  </div>
+
+  <!-- Recent Transactions -->
+  <div class="recent-card">
+    <div class="recent-header">
+      <h3 class="chart-title">🕐 Recent Transactions</h3>
+      <button class="btn-link" (click)="navigateTo('/transactions')">View All →</button>
+    </div>
+    @if (recentTransactions().length === 0) {
+      <p class="empty-msg">No transactions yet. Start by adding one!</p>
+    } @else {
+      <div class="txn-list">
+        @for (t of recentTransactions(); track t.id) {
+          <div class="txn-row">
+            <div class="txn-icon" [class.txn-income]="t.type==='income'" [class.txn-expense]="t.type==='expense'">
+              {{ t.type === 'income' ? '↗' : '↘' }}
+            </div>
+            <div class="txn-info">
+              <span class="txn-title">{{ t.title }}</span>
+              <span class="txn-meta">{{ t.category }} · {{ t.date | date:'mediumDate' }}</span>
+            </div>
+            <span class="txn-amount" [class.text-green]="t.type==='income'" [class.text-red]="t.type==='expense'">
+              {{ t.type === 'income' ? '+' : '-' }}{{ fmt(t.amount) }}
+            </span>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

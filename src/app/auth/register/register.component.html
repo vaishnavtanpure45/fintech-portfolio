@@ -1,0 +1,239 @@
+<!-- =========================================================
+     register.component.html — Registration Page Template
+     ========================================================= -->
+
+<div class="auth-page">
+
+  <!-- ═══════════════════════════════════════════════
+       LEFT PANEL — Branding
+       ═══════════════════════════════════════════════ -->
+  <div class="auth-left">
+    <div class="auth-left-content">
+
+      <div class="brand-logo">
+        <span class="logo-icon">💎</span>
+        <span class="logo-text">FinVault</span>
+      </div>
+
+      <h1 class="brand-headline">
+        Start Your<br>
+        <span class="headline-accent">Financial Journey.</span>
+      </h1>
+      <p class="brand-subtitle">
+        Join thousands of users who manage their finances smarter with FinVault. It's free, forever.
+      </p>
+
+      <div class="feature-list">
+        <div class="feature-item">
+          <span class="feature-icon">✅</span>
+          <div>
+            <strong>Free to Use</strong>
+            <p>No subscription, no hidden charges — completely free</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">📱</span>
+          <div>
+            <strong>Works Everywhere</strong>
+            <p>Responsive design for desktop, tablet, and mobile</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">🎯</span>
+          <div>
+            <strong>All-in-One Platform</strong>
+            <p>Transactions, investments, analytics — one dashboard</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       RIGHT PANEL — Registration Form
+       ═══════════════════════════════════════════════ -->
+  <div class="auth-right">
+    <div class="auth-card">
+
+      <div class="auth-card-header">
+        <div class="mobile-logo">
+          <span class="logo-icon">💎</span>
+          <span class="logo-text">FinVault</span>
+        </div>
+        <h2 class="auth-title">Create your account</h2>
+        <p class="auth-subtitle">Join FinVault and take control of your finances</p>
+      </div>
+
+      <!-- ─── Alerts ─────────────────────────── -->
+      @if (errorMessage()) {
+        <div class="alert alert-error">
+          <span>⚠️</span>
+          <span>{{ errorMessage() }}</span>
+        </div>
+      }
+
+      @if (successMessage()) {
+        <div class="alert alert-success">
+          <span>✅</span>
+          <span>{{ successMessage() }}</span>
+        </div>
+      }
+
+      <!-- ─── Register Form ───────────────────── -->
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form" novalidate>
+
+        <!-- Full Name -->
+        <div class="form-group">
+          <label class="form-label" for="fullName">Full Name</label>
+          <div class="input-wrapper">
+            <span class="input-icon">👤</span>
+            <input
+              id="fullName"
+              type="text"
+              formControlName="fullName"
+              class="form-input"
+              [class.input-error]="fullNameCtrl.invalid && fullNameCtrl.touched"
+              placeholder="Arjun Sharma"
+              autocomplete="name"
+            />
+          </div>
+          @if (fullNameCtrl.invalid && fullNameCtrl.touched) {
+            <div class="field-error">
+              @if (fullNameCtrl.errors?.['required']) { <span>Full name is required.</span> }
+              @if (fullNameCtrl.errors?.['minlength']) { <span>Name must be at least 2 characters.</span> }
+              @if (fullNameCtrl.errors?.['maxlength']) { <span>Name must be less than 50 characters.</span> }
+            </div>
+          }
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address</label>
+          <div class="input-wrapper">
+            <span class="input-icon">✉️</span>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              class="form-input"
+              [class.input-error]="emailCtrl.invalid && emailCtrl.touched"
+              placeholder="you@example.com"
+              autocomplete="email"
+            />
+          </div>
+          @if (emailCtrl.invalid && emailCtrl.touched) {
+            <div class="field-error">
+              @if (emailCtrl.errors?.['required']) { <span>Email is required.</span> }
+              @if (emailCtrl.errors?.['email']) { <span>Please enter a valid email address.</span> }
+            </div>
+          }
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🔒</span>
+            <input
+              id="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              formControlName="password"
+              class="form-input"
+              [class.input-error]="passwordCtrl.invalid && passwordCtrl.touched"
+              placeholder="Minimum 8 characters"
+              autocomplete="new-password"
+            />
+            <button type="button" class="toggle-password" (click)="togglePassword()">
+              {{ showPassword() ? '🙈' : '👁️' }}
+            </button>
+          </div>
+
+          @if (passwordCtrl.invalid && passwordCtrl.touched) {
+            <div class="field-error">
+              @if (passwordCtrl.errors?.['required']) { <span>Password is required.</span> }
+              @if (passwordCtrl.errors?.['minlength']) { <span>Password must be at least 8 characters.</span> }
+            </div>
+          }
+
+          <!-- Password Strength Bar -->
+          @if (passwordCtrl.value && passwordCtrl.value.length > 0) {
+            <div class="strength-bar-wrap">
+              <div class="strength-bars">
+                @for (bar of [1,2,3,4]; track bar) {
+                  <div
+                    class="strength-segment"
+                    [style.background]="getPasswordStrength() >= bar ? getStrengthColor() : ''"
+                  ></div>
+                }
+              </div>
+              <span class="strength-label" [style.color]="getStrengthColor()">
+                {{ getStrengthLabel() }}
+              </span>
+            </div>
+          }
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-group">
+          <label class="form-label" for="confirmPassword">Confirm Password</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🔑</span>
+            <input
+              id="confirmPassword"
+              [type]="showConfirm() ? 'text' : 'password'"
+              formControlName="confirmPassword"
+              class="form-input"
+              [class.input-error]="
+                (confirmPasswordCtrl.invalid && confirmPasswordCtrl.touched) ||
+                (registerForm.errors?.['mismatch'] && confirmPasswordCtrl.touched)
+              "
+              placeholder="Re-enter your password"
+              autocomplete="new-password"
+            />
+            <button type="button" class="toggle-password" (click)="toggleConfirmPassword()">
+              {{ showConfirm() ? '🙈' : '👁️' }}
+            </button>
+          </div>
+
+          <!-- Mismatch error (from group-level validator) -->
+          @if (registerForm.errors?.['mismatch'] && confirmPasswordCtrl.touched) {
+            <div class="field-error">
+              <span>Passwords do not match. Please re-enter.</span>
+            </div>
+          }
+          @if (confirmPasswordCtrl.errors?.['required'] && confirmPasswordCtrl.touched) {
+            <div class="field-error">
+              <span>Please confirm your password.</span>
+            </div>
+          }
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-submit" [disabled]="isLoading()">
+          @if (isLoading()) {
+            <span class="spinner"></span>
+            <span>Creating account...</span>
+          } @else {
+            <span>Create Account</span>
+            <span class="btn-arrow">→</span>
+          }
+        </button>
+
+      </form>
+
+      <!-- Footer -->
+      <div class="auth-footer">
+        <p>Already have an account?
+          <a routerLink="/login" class="auth-link">Sign in</a>
+        </p>
+      </div>
+
+      <!-- Note -->
+      <p class="disclaimer">
+        🔒 This is a demo app for academic purposes. Do not use real passwords.
+      </p>
+
+    </div>
+  </div>
+</div>

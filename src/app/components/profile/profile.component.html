@@ -1,0 +1,65 @@
+<div class="page">
+  @if (successMsg()) { <div class="toast toast-ok">✅ {{ successMsg() }}</div> }
+  @if (errorMsg()) { <div class="toast toast-err">⚠️ {{ errorMsg() }}</div> }
+
+  <h2 class="page-title">👤 Profile</h2>
+  <p class="page-subtitle">Manage your personal information</p>
+
+  <!-- Profile Header -->
+  <div class="profile-header">
+    <div class="big-avatar">{{ userInitials() }}</div>
+    <div class="ph-info">
+      <h3 class="ph-name">{{ currentUser()?.fullName }}</h3>
+      <p class="ph-email">{{ currentUser()?.email }}</p>
+      <p class="ph-since">Member since {{ currentUser()?.createdAt | date:'mediumDate' }}</p>
+    </div>
+  </div>
+
+  <!-- Profile Form -->
+  <div class="form-card">
+    <h3 class="section-title">📝 Personal Information</h3>
+    <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="pf">
+      <div class="fr">
+        <div class="fg"><label>Full Name</label><input formControlName="fullName" class="fi" />
+          @if(profileForm.get('fullName')!.invalid && profileForm.get('fullName')!.touched){<small class="fe">Required (min 2 chars)</small>}</div>
+        <div class="fg"><label>Email</label><input formControlName="email" class="fi" type="email" />
+          @if(profileForm.get('email')!.invalid && profileForm.get('email')!.touched){<small class="fe">Valid email required</small>}</div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>Phone</label><input formControlName="phone" class="fi" placeholder="+91 98765 43210" /></div>
+        <div class="fg"><label>Occupation</label><input formControlName="occupation" class="fi" placeholder="e.g. Software Engineer" /></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>Currency</label>
+          <select formControlName="currency" class="fi">
+            <option value="INR">🇮🇳 INR - Indian Rupee</option>
+            <option value="USD">🇺🇸 USD - US Dollar</option>
+            <option value="EUR">🇪🇺 EUR - Euro</option>
+            <option value="GBP">🇬🇧 GBP - British Pound</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" [disabled]="isLoading()">@if(isLoading()){<span class="spinner"></span>}Save Changes</button>
+    </form>
+  </div>
+
+  <!-- Password Section -->
+  <div class="form-card">
+    <div class="section-header">
+      <h3 class="section-title">🔒 Change Password</h3>
+      <button class="btn-link" (click)="showPwdSection.set(!showPwdSection())">{{ showPwdSection() ? 'Cancel' : 'Change' }}</button>
+    </div>
+    @if (showPwdSection()) {
+      <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="pf">
+        <div class="fg"><label>Current Password</label><input formControlName="currentPassword" type="password" class="fi" /></div>
+        <div class="fr">
+          <div class="fg"><label>New Password</label><input formControlName="newPassword" type="password" class="fi" />
+            @if(passwordForm.get('newPassword')!.invalid && passwordForm.get('newPassword')!.touched){<small class="fe">Min 8 characters</small>}</div>
+          <div class="fg"><label>Confirm New Password</label><input formControlName="confirmPassword" type="password" class="fi" /></div>
+        </div>
+        <button type="submit" class="btn btn-primary" [disabled]="isLoading()">Update Password</button>
+      </form>
+    }
+    <p class="disclaimer">🔒 Demo app — do not use real passwords. JSON Server stores data in plain text.</p>
+  </div>
+</div>

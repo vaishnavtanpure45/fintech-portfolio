@@ -1,0 +1,69 @@
+/* =================================================================
+   layout.component.css — App Shell Styles
+   ================================================================= */
+
+/* ── Main App Layout (Sidebar + Content side by side) ──────────── */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg-primary);
+  position: relative;
+}
+
+/* ── Main Wrapper (Navbar on top + page content below) ─────────── */
+.main-wrapper {
+  flex: 1;
+  margin-left: 260px;        /* Push content right to make room for sidebar */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-width: 0;              /* Prevents overflow issues */
+  transition: margin-left 0.3s ease;
+}
+
+/* ── Page Content Area ──────────────────────────────────────────── */
+.page-content {
+  flex: 1;
+  padding: 28px;
+  background: var(--bg-primary);
+  overflow-x: hidden;
+}
+
+/* ── Mobile Overlay ─────────────────────────────────────────────── */
+/* Dark semi-transparent layer behind the mobile sidebar */
+.overlay {
+  display: none;             /* Hidden on desktop */
+  position: fixed;
+  inset: 0;                  /* Covers the entire screen */
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 150;              /* Above content, below sidebar */
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Responsive: Tablet (1024px) ────────────────────────────────── */
+@media (max-width: 1024px) {
+  .page-content {
+    padding: 20px;
+  }
+}
+
+/* ── Responsive: Mobile (768px) ─────────────────────────────────── */
+@media (max-width: 768px) {
+  .main-wrapper {
+    margin-left: 0;          /* On mobile, sidebar overlays content */
+  }
+
+  .overlay {
+    display: block;          /* Show overlay on mobile when sidebar is open */
+  }
+
+  .page-content {
+    padding: 16px;
+  }
+}

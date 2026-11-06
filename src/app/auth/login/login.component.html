@@ -1,0 +1,219 @@
+<!-- =========================================================
+     login.component.html — Login Page Template
+     =========================================================
+     Layout: Split-screen design
+       Left panel  → Branding, features, illustration
+       Right panel → Login form card
+
+     On mobile: left panel hides, only form shows (responsive)
+     ========================================================= -->
+
+<div class="auth-page">
+
+  <!-- ═══════════════════════════════════════════════
+       LEFT PANEL — Branding & Features
+       ═══════════════════════════════════════════════ -->
+  <div class="auth-left">
+    <div class="auth-left-content">
+
+      <!-- Logo -->
+      <div class="brand-logo">
+        <span class="logo-icon">💎</span>
+        <span class="logo-text">FinVault</span>
+      </div>
+
+      <!-- Tagline -->
+      <h1 class="brand-headline">
+        Your Money,<br>
+        <span class="headline-accent">Smarter.</span>
+      </h1>
+      <p class="brand-subtitle">
+        Track expenses, manage investments, and grow your wealth — all in one powerful dashboard.
+      </p>
+
+      <!-- Feature Highlights -->
+      <div class="feature-list">
+        <div class="feature-item">
+          <span class="feature-icon">📊</span>
+          <div>
+            <strong>Smart Analytics</strong>
+            <p>Visual charts for every rupee you earn or spend</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">📈</span>
+          <div>
+            <strong>Investment Portfolio</strong>
+            <p>Track stocks, mutual funds, ETFs, FDs and gold</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">🔒</span>
+          <div>
+            <strong>Secure & Private</strong>
+            <p>Your data stays with you — always in control</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="brand-stats">
+        <div class="stat">
+          <span class="stat-value">9</span>
+          <span class="stat-label">Modules</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">5+</span>
+          <span class="stat-label">Chart Types</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">100%</span>
+          <span class="stat-label">Free</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       RIGHT PANEL — Login Form
+       ═══════════════════════════════════════════════ -->
+  <div class="auth-right">
+    <div class="auth-card">
+
+      <!-- Card Header -->
+      <div class="auth-card-header">
+        <div class="mobile-logo">
+          <span class="logo-icon">💎</span>
+          <span class="logo-text">FinVault</span>
+        </div>
+        <h2 class="auth-title">Welcome back</h2>
+        <p class="auth-subtitle">Sign in to your account to continue</p>
+      </div>
+
+      <!-- ─── Error Alert ─────────────────────────── -->
+      @if (errorMessage()) {
+        <div class="alert alert-error">
+          <span class="alert-icon">⚠️</span>
+          <span>{{ errorMessage() }}</span>
+        </div>
+      }
+
+      <!-- ─── Login Form ──────────────────────────── -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form" novalidate>
+
+        <!-- Email Field -->
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address</label>
+          <div class="input-wrapper">
+            <span class="input-icon">✉️</span>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              class="form-input"
+              [class.input-error]="emailCtrl.invalid && emailCtrl.touched"
+              placeholder="you@example.com"
+              autocomplete="email"
+            />
+          </div>
+
+          <!-- Validation Error Messages -->
+          @if (emailCtrl.invalid && emailCtrl.touched) {
+            <div class="field-error">
+              @if (emailCtrl.errors?.['required']) {
+                <span>Email address is required.</span>
+              }
+              @if (emailCtrl.errors?.['email']) {
+                <span>Please enter a valid email address.</span>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-group">
+          <div class="label-row">
+            <label class="form-label" for="password">Password</label>
+          </div>
+          <div class="input-wrapper">
+            <span class="input-icon">🔒</span>
+            <input
+              id="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              formControlName="password"
+              class="form-input"
+              [class.input-error]="passwordCtrl.invalid && passwordCtrl.touched"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+            />
+            <!-- Toggle show/hide password -->
+            <button
+              type="button"
+              class="toggle-password"
+              (click)="togglePassword()"
+              [title]="showPassword() ? 'Hide password' : 'Show password'"
+            >
+              {{ showPassword() ? '🙈' : '👁️' }}
+            </button>
+          </div>
+
+          @if (passwordCtrl.invalid && passwordCtrl.touched) {
+            <div class="field-error">
+              @if (passwordCtrl.errors?.['required']) {
+                <span>Password is required.</span>
+              }
+              @if (passwordCtrl.errors?.['minlength']) {
+                <span>Password must be at least 6 characters.</span>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="btn-submit"
+          [disabled]="isLoading()"
+        >
+          @if (isLoading()) {
+            <span class="spinner"></span>
+            <span>Signing in...</span>
+          } @else {
+            <span>Sign In</span>
+            <span class="btn-arrow">→</span>
+          }
+        </button>
+
+      </form>
+
+      <!-- Register Link -->
+      <div class="auth-footer">
+        <p>Don't have an account?
+          <a routerLink="/register" class="auth-link">Create one free</a>
+        </p>
+      </div>
+
+      <!-- ─── Demo Credentials Card ───────────────── -->
+      <div class="demo-card">
+        <div class="demo-header">
+          <span>🧪</span>
+          <strong>Demo Account</strong>
+        </div>
+        <div class="demo-creds">
+          <div class="demo-row">
+            <span class="demo-label">Email</span>
+            <span class="demo-value">arjun&#64;finvault.com</span>
+          </div>
+          <div class="demo-row">
+            <span class="demo-label">Password</span>
+            <span class="demo-value">Demo&#64;1234</span>
+          </div>
+        </div>
+        <button type="button" class="btn-demo" (click)="fillDemo()">
+          Use Demo Account
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,89 @@
+<!--
+  sidebar.component.html — Sidebar Navigation Template
+
+  Structure:
+  ┌─────────────────────┐
+  │ HEADER (logo + X)   │
+  ├─────────────────────┤
+  │ NAV SECTION         │
+  │  • Dashboard        │
+  │  • Transactions     │
+  │  • Income/Expenses  │
+  │  • Investments      │
+  │  • Analytics        │
+  │  • Profile          │
+  │  • Settings         │
+  ├─────────────────────┤
+  │ FOOTER              │
+  │  User card          │
+  │  Logout button      │
+  └─────────────────────┘
+-->
+
+<aside class="sidebar" [class.open]="isOpen()">
+
+  <!-- ══ HEADER ══════════════════════════════════════════════════ -->
+  <div class="sidebar-header">
+
+    <!-- App Logo + Name -->
+    <div class="brand">
+      <div class="brand-icon">💎</div>
+      <div class="brand-info">
+        <span class="brand-name">FinVault</span>
+        <span class="brand-tagline">Finance Manager</span>
+      </div>
+    </div>
+
+    <!-- Close button (only visible on mobile) -->
+    <button class="btn-close-sidebar" (click)="close()" aria-label="Close sidebar">
+      ✕
+    </button>
+  </div>
+
+  <!-- ══ NAVIGATION ══════════════════════════════════════════════ -->
+  <nav class="sidebar-nav">
+
+    <span class="nav-section-label">MAIN MENU</span>
+
+    @for (item of navItems; track item.path) {
+      <a
+        [routerLink]="item.path"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: false }"
+        class="nav-item"
+        (click)="onNavClick()"
+      >
+        <span class="nav-icon">{{ item.icon }}</span>
+        <span class="nav-label">{{ item.label }}</span>
+        <!-- Active indicator dot -->
+        <span class="nav-active-dot"></span>
+      </a>
+    }
+
+  </nav>
+
+  <!-- ══ FOOTER (User + Logout) ══════════════════════════════════ -->
+  <div class="sidebar-footer">
+
+    <!-- Divider -->
+    <div class="sidebar-divider"></div>
+
+    <!-- User profile card -->
+    <div class="user-card">
+      <div class="user-avatar">
+        {{ userInitials() }}
+      </div>
+      <div class="user-info">
+        <span class="user-name">{{ currentUser()?.fullName ?? 'User' }}</span>
+        <span class="user-email">{{ currentUser()?.email ?? '' }}</span>
+      </div>
+    </div>
+
+    <!-- Logout Button -->
+    <button class="btn-logout" (click)="logout()">
+      <span class="logout-icon">🚪</span>
+      <span>Logout</span>
+    </button>
+
+  </div>
+</aside>

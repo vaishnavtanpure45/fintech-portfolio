@@ -1,0 +1,21 @@
+<div class="page">
+  <h2 class="page-title">📉 Financial Analytics</h2>
+  <p class="page-subtitle">Visual insights into your financial data</p>
+
+  <div class="stats-row">
+    <div class="stat-card st-green"><span class="st-label">Income</span><span class="st-val">{{ fmt(totalIncome()) }}</span></div>
+    <div class="stat-card st-red"><span class="st-label">Expenses</span><span class="st-val">{{ fmt(totalExpenses()) }}</span></div>
+    <div class="stat-card st-indigo"><span class="st-label">Net Balance</span><span class="st-val">{{ fmt(netBalance()) }}</span></div>
+    <div class="stat-card st-amber"><span class="st-label">Invested</span><span class="st-val">{{ fmt(totalInvested()) }}</span></div>
+    <div class="stat-card" [class.st-green]="totalPL()>=0" [class.st-red]="totalPL()<0"><span class="st-label">Portfolio P/L</span><span class="st-val">{{ fmt(totalPL()) }}</span></div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="ch-card"><h3 class="ch-title">📊 Income vs Expenses</h3><div class="ch-wrap"><canvas #ieChart></canvas></div></div>
+    <div class="ch-card"><h3 class="ch-title">📈 Net Balance Trend</h3><div class="ch-wrap"><canvas #balChart></canvas></div></div>
+    <div class="ch-card"><h3 class="ch-title">🍩 Expense by Category</h3><div class="ch-wrap"><canvas #catChart></canvas></div></div>
+    <div class="ch-card"><h3 class="ch-title">🍩 Portfolio Distribution</h3><div class="ch-wrap"><canvas #portChart></canvas></div></div>
+    <div class="ch-card"><h3 class="ch-title">📊 Investment P/L</h3><div class="ch-wrap"><canvas #plChart></canvas></div></div>
+    <div class="ch-card"><h3 class="ch-title">📉 Monthly Expenses</h3><div class="ch-wrap"><canvas #expChart></canvas></div></div>
+  </div>
+</div>

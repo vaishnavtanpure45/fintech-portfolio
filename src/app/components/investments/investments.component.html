@@ -1,0 +1,80 @@
+<div class="page">
+  @if (successMsg()) { <div class="toast">✅ {{ successMsg() }}</div> }
+
+  <div class="page-header">
+    <div><h2 class="page-title">📈 Investment Portfolio</h2><p class="page-subtitle">Track and manage your investments</p></div>
+    <button class="btn btn-primary" (click)="openAdd()">+ Add Investment</button>
+  </div>
+
+  <div class="cards-grid">
+    <div class="scard sc-indigo"><span class="sc-label">Total Invested</span><span class="sc-val">{{ fmt(totalInvested()) }}</span></div>
+    <div class="scard sc-blue"><span class="sc-label">Current Value</span><span class="sc-val">{{ fmt(totalCurrent()) }}</span></div>
+    <div class="scard" [class.sc-green]="totalPL()>=0" [class.sc-red]="totalPL()<0"><span class="sc-label">Total P/L</span><span class="sc-val">{{ fmt(totalPL()) }}</span></div>
+    <div class="scard" [class.sc-green]="returnPct()>=0" [class.sc-red]="returnPct()<0"><span class="sc-label">Return %</span><span class="sc-val">{{ returnPct() >= 0 ? '+' : '' }}{{ returnPct() }}%</span></div>
+  </div>
+
+  <div class="content-grid">
+    <div class="table-card">
+      @if (investments().length === 0) {
+        <div class="empty"><span class="empty-icon">📭</span><p>No investments yet.</p></div>
+      } @else {
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead><tr><th>Name</th><th>Type</th><th>Invested</th><th>Current</th><th>P/L</th><th>Return</th><th>Actions</th></tr></thead>
+            <tbody>
+              @for (i of investments(); track i.id) {
+                <tr>
+                  <td><span class="td-name">{{ i.name }}</span><br/><small class="td-sym">{{ i.symbol }}</small></td>
+                  <td><span class="badge-type" [class]="getTypeBadgeClass(i.type)">{{ i.type }}</span></td>
+                  <td class="td-num">{{ fmt(i.investedAmount) }}</td>
+                  <td class="td-num">{{ fmt(i.currentValue) }}</td>
+                  <td class="td-num" [class.text-green]="getPL(i)>=0" [class.text-red]="getPL(i)<0">{{ getPL(i) >= 0 ? '+' : '' }}{{ fmt(getPL(i)) }}</td>
+                  <td><span class="ret-badge" [class.rb-green]="getRetPct(i)>=0" [class.rb-red]="getRetPct(i)<0">{{ getRetPct(i) >= 0 ? '+' : '' }}{{ getRetPct(i) }}%</span></td>
+                  <td class="td-actions"><button class="btn-sm btn-edit" (click)="openEdit(i)">✏️</button><button class="btn-sm btn-delete" (click)="confirmDelete(i.id)">🗑️</button></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+    <div class="chart-card"><h3 class="card-title">🍩 Portfolio Distribution</h3><div class="chart-wrap"><canvas #portfolioChart></canvas></div></div>
+  </div>
+
+  @if (showModal()) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <div class="modal-header"><h3>{{ editMode() ? 'Edit Investment' : 'Add Investment' }}</h3><button class="btn-close" (click)="closeModal()">✕</button></div>
+        <form [formGroup]="invForm" (ngSubmit)="onSubmit()" class="modal-form">
+          <div class="form-row">
+            <div class="fg"><label>Investment Name</label><input formControlName="name" class="fi" placeholder="e.g. Infosys Ltd." />
+              @if(invForm.get('name')!.invalid && invForm.get('name')!.touched){<small class="fe">Required</small>}</div>
+            <div class="fg"><label>Type</label><select formControlName="type" class="fi">@for(t of investmentTypes; track t){<option [value]="t">{{t}}</option>}</select></div>
+          </div>
+          <div class="form-row">
+            <div class="fg"><label>Symbol / Ticker</label><input formControlName="symbol" class="fi" placeholder="e.g. INFY" /></div>
+            <div class="fg"><label>Sector</label><input formControlName="sector" class="fi" placeholder="e.g. IT" /></div>
+          </div>
+          <div class="form-row">
+            <div class="fg"><label>Invested Amount (₹)</label><input type="number" formControlName="investedAmount" class="fi" /></div>
+            <div class="fg"><label>Current Value (₹)</label><input type="number" formControlName="currentValue" class="fi" /></div>
+          </div>
+          <div class="form-row">
+            <div class="fg"><label>Units</label><input type="number" formControlName="units" class="fi" step="0.01" /></div>
+            <div class="fg"><label>Purchase Price (₹)</label><input type="number" formControlName="purchasePrice" class="fi" step="0.01" /></div>
+          </div>
+          <div class="form-row">
+            <div class="fg"><label>Current Price (₹)</label><input type="number" formControlName="currentPrice" class="fi" step="0.01" /></div>
+            <div class="fg"><label>Purchase Date</label><input type="date" formControlName="purchaseDate" class="fi" /></div>
+          </div>
+          <div class="fg"><label>Description</label><textarea formControlName="description" class="fi fi-ta" rows="2" placeholder="Optional notes"></textarea></div>
+          <div class="modal-actions"><button type="button" class="btn btn-outline" (click)="closeModal()">Cancel</button><button type="submit" class="btn btn-primary" [disabled]="isLoading()">@if(isLoading()){<span class="spinner"></span>}{{ editMode() ? 'Update' : 'Add Investment' }}</button></div>
+        </form>
+      </div>
+    </div>
+  }
+
+  @if (showDeleteConfirm()) {
+    <div class="modal-overlay" (click)="cancelDelete()"><div class="modal-box modal-sm" (click)="$event.stopPropagation()"><h3 class="ct">🗑️ Delete Investment?</h3><p class="cm">This cannot be undone.</p><div class="modal-actions"><button class="btn btn-outline" (click)="cancelDelete()">Cancel</button><button class="btn btn-danger" (click)="onDelete()">Delete</button></div></div></div>
+  }
+</div>
